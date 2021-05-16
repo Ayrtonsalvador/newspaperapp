@@ -3,15 +3,17 @@ import { useParams } from 'react-router-dom';
 import './App.css';
 import { Card, Icon, Modal} from 'antd';
 import Nav from './Nav'
+import {connect} from 'react-redux'
 
 const { Meta } = Card;
 
-function ScreenArticlesBySource() {
+function ScreenArticlesBySource(props) {
 
   const [articleList, setArticleList] = useState([])
+  const [visible, setVisible] = useState(false)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [visible, setVisible] = useState(false)
+
 
   var { id } = useParams();
 
@@ -53,7 +55,7 @@ function ScreenArticlesBySource() {
 
             <div className="Card">
         {  articleList.map((article,i) => (
-              <div  style={{display:'flex',justifyContent:'center'}}>
+              <div key={i} style={{display:'flex',justifyContent:'center'}}>
 
                 <Card
                   style={{ 
@@ -70,7 +72,7 @@ function ScreenArticlesBySource() {
                   }
                   actions={[
                       <Icon type="read" key="ellipsis2" onClick={() => showModal(article.title,article.content)}/>,
-                      <Icon type="like" key="ellipsis"/>
+                      <Icon type="like" key="ellipsis" onClick={()=> {props.addToWishList(article)}}/>
                   ]}
                   >
 
@@ -103,4 +105,17 @@ function ScreenArticlesBySource() {
   );
 }
 
-export default ScreenArticlesBySource;
+function mapDispatchToProps(dispatch){
+  return {
+    addToWishList: function(article){
+      dispatch({type: 'addArticle',
+        articleLiked: article
+      })
+    }
+  }
+}
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(ScreenArticlesBySource)
