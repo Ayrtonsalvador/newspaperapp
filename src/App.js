@@ -8,8 +8,9 @@ import ScreenSource from './ScreenSource';
 import {Provider} from 'react-redux';
 import {createStore, combineReducers} from 'redux';
 import wishList from './reducers/articles'
+import selectedLanguage from './reducers/languages'
 
-const store = createStore(combineReducers({wishList}))
+const store = createStore(combineReducers({wishList, selectedLanguage}))
 
 function App() {
   return (

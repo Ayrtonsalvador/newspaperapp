@@ -3,29 +3,42 @@ import {Link} from "react-router-dom";
 import './App.css';
 import { List, Avatar} from 'antd';
 import Nav from './Nav'
+import { connect } from 'react-redux';
 
-function ScreenSource() {
+function ScreenSource(props) {
 
   const [sourceList, setSourceList] = useState([])
+  const [selectedLanguage, setSelectedLanguage] = useState(props.selectedLanguage)
 
   useEffect(() => {
 
     const APIResultsLoading = async() => {
-      const data = await fetch('https://newsapi.org/v2/sources?language=fr&country=fr&apiKey=4c51d9f314cb4c3f8eba5f00fdb0e96f')
+
+      var langue = 'fr'
+      var country = 'fr'
+      if(selectedLanguage == 'en'){
+        var langue = 'en'
+        var country = 'us'
+      }
+
+      const data = await fetch(`https://newsapi.org/v2/sources?language=${langue}&country=${country}&apiKey=4c51d9f314cb4c3f8eba5f00fdb0e96f`)
       const body = await data.json()
       setSourceList(body.sources)
     }
 
     APIResultsLoading()
 
-  }, []);
+  }, [selectedLanguage]);
 
 
   return (
     <div>
         <Nav/>
        
-       <div className="Banner"/>
+        <div style={{display:'flex', justifyContent:'center', alignItems:'center'}} className="Banner">
+          <img style={{width:'30px', margin:'10px',cursor:'pointer'}} src='/images/fr.png' onClick={() => setSelectedLanguage('fr')} />
+          <img style={{width:'30px', margin:'10px',cursor:'pointer'}} src='/images/uk.png' onClick={() => setSelectedLanguage('en')} /> 
+        </div>
 
        <div className="HomeThemes">
           
@@ -50,4 +63,19 @@ function ScreenSource() {
   );
 }
 
-export default ScreenSource;
+function mapStateToProps(state){
+  return {selectedLanguage: state.selectedLanguage}
+}
+
+function mapDispatchToProps(dispatch){
+  return {
+    changeLanguage: function(selectedLanguage){
+      dispatch( {type: 'changeLanguage', selectedLanguage: selectedLanguage} )
+    }
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ScreenSource);
